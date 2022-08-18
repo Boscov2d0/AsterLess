@@ -2,24 +2,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class TimeBody : MonoBehaviour
+public sealed class TimeBody
 {
-    [SerializeField] private Button _buttonP;
-    [SerializeField] private Button _buttonN;
-    [SerializeField] private float _recordTime = 5f;
+    private Button _buttonP;
+    private Button _buttonN;
+    private float _recordTime;
     private List<PointInTime> _pointsInTime;
+    private Transform _transform;
     private Rigidbody _rb;
     private bool _isRewinding;
 
-    private void Start()
+    public TimeBody(GameObject gameObject, float recordTime, Button buttonP, Button buttonN) 
     {
         _pointsInTime = new List<PointInTime>();
-        _rb = GetComponent<Rigidbody>();
-
+        _rb = gameObject.GetComponent<Rigidbody>();
+        _transform = gameObject.transform;
+        _recordTime = recordTime;
+        _buttonP = buttonP;
+        _buttonN = buttonN;
         _buttonP.onClick.AddListener(Rewind);
         _buttonN.onClick.AddListener(Record);
     }
-    private void Update()
+
+    public void Execute()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -30,7 +35,7 @@ public sealed class TimeBody : MonoBehaviour
             StopRewind();
         }
     }
-    private void FixedUpdate()
+    public void FixedExecute()
     {
         if (_isRewinding)
         {
@@ -46,15 +51,15 @@ public sealed class TimeBody : MonoBehaviour
         if (_pointsInTime.Count > 1)
         {
             PointInTime pointInTime = _pointsInTime[0];
-            transform.position = pointInTime.Position;
-            transform.rotation = pointInTime.Rotation;
+            _transform.position = pointInTime.Position;
+            _transform.rotation = pointInTime.Rotation;
             _pointsInTime.RemoveAt(0);
         }
         else
         {
             PointInTime pointInTime = _pointsInTime[0];
-            transform.position = pointInTime.Position;
-            transform.rotation = pointInTime.Rotation;
+            _transform.position = pointInTime.Position;
+            _transform.rotation = pointInTime.Rotation;
             StopRewind();
         }
     }
@@ -65,8 +70,8 @@ public sealed class TimeBody : MonoBehaviour
         {
             _pointsInTime.RemoveAt(_pointsInTime.Count - 1);
         }
-        _pointsInTime.Insert(0, new PointInTime(transform.position,
-        transform.rotation, _rb.velocity, _rb.angularVelocity));
+        _pointsInTime.Insert(0, new PointInTime(_transform.position,
+        _transform.rotation, _rb.velocity, _rb.angularVelocity));
     }
     private void StartRewind()
     {

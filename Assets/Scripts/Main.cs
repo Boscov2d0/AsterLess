@@ -28,6 +28,8 @@ public class Main : MonoBehaviour
     float time = 0;
     int timer = 0;
 
+    Create create;
+
     private void Awake()
     {
         Time.timeScale = 1;
@@ -48,6 +50,8 @@ public class Main : MonoBehaviour
 
         _playerController.DeathEvent += GameOver;
 
+        create.Activate(new ConsoleDisplay());
+        create.Activate(new GameService(_createAsteroidsTimer, _createUFOTimer));
         gameService = new GameService(_createAsteroidsTimer, _createUFOTimer);
 
         root = new PlayerModifier(_player);
@@ -56,7 +60,7 @@ public class Main : MonoBehaviour
     void Update()
     {
         _playerController.Execute();
-        gameService.Start();
+        gameService.Execute();
     }
     void TimerTest()
     {

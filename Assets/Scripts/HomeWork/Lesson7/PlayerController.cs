@@ -7,6 +7,7 @@ using System.Linq;
 using Random = UnityEngine.Random;
 internal sealed class PlayerController : IUnit
 {
+    private Player _player;
     private PlayerMove _playerMove;
     private PlayerShoot _playerShoot;
     private PlayerLife _playerLife;
@@ -16,8 +17,12 @@ internal sealed class PlayerController : IUnit
 
     private List<IAbility> _ability;
 
+    Drift _drift;
+    ControlFliying _controlFliying;
+
     public PlayerController(Player player, List<IAbility> ability)
     {
+        _player = player;
         _playerMove = new PlayerMove(player);
         _playerShoot = new PlayerShoot(player, new LazerWeapon(player), new TorpedoWeeapon(player));
         _playerLife = new PlayerLife(player);
@@ -27,6 +32,9 @@ internal sealed class PlayerController : IUnit
         _type[0] = "Lazer";
         _type[1] = "Torpedo";
         _ability = ability;
+
+        _drift = new Drift();
+        _controlFliying = new ControlFliying();
     }
 
     public IAbility this[int index] => _ability[index];
@@ -54,6 +62,15 @@ internal sealed class PlayerController : IUnit
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             _index = 1;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            _drift.Movement(_player);
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
+            _controlFliying.Movement(_player);
         }
 
         _playerMove.CheckPosition();
