@@ -22,5 +22,6 @@ public class PlayerMove : ObjectsMoveController
     public void MoveFront()
     {
         _rigidbody.velocity = _transform.forward * _speed;
+        _rigidbody.AddForce(_transform.forward * _speed);// = _transform.forward * _speed;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Asteroid : Unit
@@ -20,6 +21,8 @@ public class Asteroid : Unit
     public int CurrentHealth { get => _currentHealth; set => _currentHealth = value; }
     public bool IsActive { get => _isActive; set => _isActive = value; }
 
+    public Action<MessagePayload<string>> action;
+    public Action<string> ShowName;
     public void Test()
     {
         throw new System.NotImplementedException();
@@ -30,6 +33,8 @@ public class Asteroid : Unit
         if (TryGetComponent(out Unit unit) || TryGetComponent(out Amo amo))
         {
             Crash?.Invoke(_bigDamage);
+            ShowName?.Invoke(Transform.name);
+            action?.Invoke(new MessagePayload<string>("865413", gameObject.name));
         }
     }
 }

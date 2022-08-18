@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class GameService
+internal sealed class GameService : IDealingDamage
 {
     private List<IController> _asteroidList;
     private List<IController> _activeAsteroidList;
@@ -30,13 +30,24 @@ internal sealed class GameService
         _createUFOTimer = createUFOTimer;
     }
 
-    public void Start()
+    public void Execute()
     {
         CreateAsteroids();
         CreateUFO();
         SortActive(_asteroidList, _activeAsteroidList);
         SortActive(_ufoList, _activeUFOList);
     }
+
+    public void Visit(AsteroidFactory hit)
+    {
+        CreateAsteroids();
+    }
+
+    public void Visit(UFOFactory hit)
+    {
+        CreateUFO();
+    }
+
     private void CreateAsteroids()
     {
         if (_activeAsteroidList.Count <= 10)
