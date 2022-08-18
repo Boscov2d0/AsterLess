@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class UFOFactory : IFactory<UFOController>
+public sealed class UFOFactory : Create, IFactory<UFOController> 
 {
     ViewServices viewServices;
 
@@ -19,5 +19,10 @@ public class UFOFactory : IFactory<UFOController>
     private void Death(GameObject objcet)
     {
         viewServices.Destroy(objcet);
+    }
+
+    public override void Activate(IDealingDamage value)
+    {
+        value.Visit(this);
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 using Random = UnityEngine.Random;
 
-internal sealed class AsteroidFactory : IFactory<AsteroidController>
+public sealed class AsteroidFactory : Create, IFactory<AsteroidController>
 {
     ViewServices viewServices;
     private string[] _type = new string[3];
@@ -12,9 +12,12 @@ internal sealed class AsteroidFactory : IFactory<AsteroidController>
     IMessageBroker messageBrokerImpl;
     Asteroid asteroid;
 
+    ListenerShowDamage listenerDamage;
+
     public AsteroidFactory() 
     {
         viewServices = new ViewServices();
+        listenerDamage = new ListenerShowDamage();
 
         _type[0] = "BigAsteroid";
         _type[1] = "MiddleAsteroid";
@@ -25,6 +28,9 @@ internal sealed class AsteroidFactory : IFactory<AsteroidController>
         SetType();
 
         asteroid = viewServices.Instantiate<Asteroid>(Resources.Load<GameObject>(_type[_index]));
+        
+        listenerDamage.Add(asteroid);
+
         MessagePayload<string> messagePayload = new MessagePayload<string>("Asteroid destroy", asteroid);
         messageBrokerImpl = MessageBrokerImpl.Instance;
         messageBrokerImpl.Subscribe<string>(TestMessage());
@@ -46,5 +52,10 @@ internal sealed class AsteroidFactory : IFactory<AsteroidController>
     private Action<MessagePayload<string>> TestMessage() 
     {
         return asteroid.action;
+    }
+
+    public override void Activate(IDealingDamage value)
+    {
+        value.Visit(this);
     }
 }
